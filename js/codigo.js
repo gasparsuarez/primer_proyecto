@@ -6,8 +6,13 @@ const tipo = document.querySelector('.form-select');
 const btnGenerar = document.querySelector('#btnGenerar');
 const btnBorrar = document.querySelector('#btnBorrar');
 const kgFinales = document.querySelector('#kgfinales');
+const tIngredientes = document.querySelector('.t-ingredientes');
+const seleccione = document.querySelector('#form-select .seleccione');
 
-const datosBusqueda = [];
+const datosBusqueda = {
+    tipo : '',
+    kilos : ''
+};
 
 cargarPagina();
 
@@ -15,19 +20,47 @@ cargarPagina();
 btnGenerar.addEventListener('click', mostrarIngredientes);
 btnBorrar.addEventListener('click', resetearFormulario);
 
-tipo.addEventListener('blur',  e => {
+tipo.addEventListener('blur', e => {
     datosBusqueda.tipo = e.target.value;
+    validarFormulario();
 });
 kilosCarne.addEventListener('blur', e => {
-    datosBusqueda.kilos = e.target.value;
-    // validarFormula();
-}); 
+    datosBusqueda.kilos = parseInt(e.target.value);
+    validarFormulario();
+});
 
+function validarFormulario(){
+    console.log(datosBusqueda);
+    if(datosBusqueda.kilos > 0) {
+        kilosCarne.classList.remove('border', 'border-danger');
+        btnGenerar.classList.remove('disabled');
+        btnBorrar.classList.remove('disabled');
+    } else {
+        kilosCarne.classList.add('border', 'border-danger');
+        btnGenerar.disabled = true;
+        btnBorrar.disabled = true;
+    }
+    if(datosBusqueda.tipo === "seleccione"){
+        console.log('es seleccione');
+        tipo.classList.add('border', 'border-danger');
+        btnGenerar.classList.add('disabled');
+        btnBorrar.classList.add('disabled');
+        btnBorrar.disabled = false;
+        btnGenerar.disabled = false;
+    } else {
+        tipo.classList.remove('border', 'border-danger');
+        btnGenerar.disabled = false;
+        btnBorrar.disabled = false;
+    }
+}
 function resetearFormulario(){
+    kilosCarne.value = "";
     cargarPagina();
 }
 
 function cargarPagina(){
+    btnGenerar.disabled = true;
+    btnBorrar.disabled = true;
     btnGenerar.classList.add('disabled');
     btnBorrar.classList.add('disabled');
     ingredientes0.classList.remove('border', 'border-secondary', 'p-1');
@@ -35,13 +68,15 @@ function cargarPagina(){
     ingredientes0.textContent = '';
     ingredientes1.textContent = '';
     kgFinales.textContent = '';
+    tIngredientes.textContent = '';
 }
 
 
 function mostrarIngredientes(){
-    ingredientes0.classList.add('border', 'border-seconday', 'p-1');
-    ingredientes1.classList.add('border', 'border-seconday', 'p-1');
-    if(datosBusqueda.tipo == 'pollo' && datosBusqueda.kilos > 0){
+    ingredientes0.classList.add('border', 'border-secondary', 'p-1');
+    ingredientes1.classList.add('border', 'border-secondary', 'p-1');
+    tIngredientes.textContent = "Ingredientes";
+    if(datosBusqueda.tipo == 'pollo'){
         let sal = 0.600/30*datosBusqueda.kilos,
             azucar = 0.100/30*datosBusqueda.kilos,
             pluscolor = 0.100/30*datosBusqueda.kilos,
@@ -56,21 +91,38 @@ function mostrarIngredientes(){
             cuero = 8/30*datosBusqueda.kilos
     
     ingredientes0.innerHTML = `Pechuga: ${datosBusqueda.kilos} Kg<br>
-                               Grasa Cerdo: ${grasa.toFixed(3)} Kg<br> 
-                               Cuero Pollo: ${cuero.toFixed(3)} Kg`
+                               Grasa Cerdo: ${grasa.toFixed(2)} Kg<br> 
+                               Cuero Pollo: ${cuero.toFixed(2)} Kg`
             
-    ingredientes1.innerHTML = `Sal: ${sal.toFixed(3)}<br>
-                              Azucar: ${azucar.toFixed(3)}<br>
-                              Pluscolor: ${pluscolor.toFixed(3)}<br>
-                              Rendiplus: ${rendiplus.toFixed(3)}<br>
-                              Pimienta: ${pimienta.toFixed(3)}<br>
-                              Fecula: ${fecula.toFixed(3)}<br>
-                              Ajo: ${ajo.toFixed(3)}<br>
-                              Pan Rallado: ${rebozador.toFixed(3)}<br>
-                              Oregano: ${oregano.toFixed(3)}<br>
-                              Agua: ${agua.toFixed(3)}`;
+    ingredientes1.innerHTML = `Sal: ${sal.toFixed(2)}<br>
+                              Azucar: ${azucar.toFixed(2)}<br>
+                              Pluscolor: ${pluscolor.toFixed(2)}<br>
+                              Rendiplus: ${rendiplus.toFixed(2)}<br>
+                              Pimienta: ${pimienta.toFixed(2)}<br>
+                              Fecula: ${fecula.toFixed(2)}<br>
+                              Ajo: ${ajo.toFixed(2)}<br>
+                              Pan Rallado: ${rebozador.toFixed(2)}<br>
+                              Oregano: ${oregano.toFixed(2)}<br>
+                              Agua: ${agua.toFixed(2)}`;
+    
+                              let resultado = parseFloat(datosBusqueda.kilos)
+                              + parseFloat(sal)
+                              + parseFloat(azucar)
+                              + parseFloat(pluscolor)
+                              + parseFloat(rendiplus)
+                              + parseFloat(pimienta)
+                              + parseFloat(fecula)
+                              + parseFloat(ajo)
+                              + parseFloat(rebozador)
+                              + parseFloat(oregano)
+                              + parseFloat(agua)
+                              + parseFloat(grasa)
+                              + parseFloat(cuero);
+              
+              kgFinales.innerHTML = `Total de KG finales: <font color="orange">${resultado.toFixed(2)}</font>`;
+
     };
-    if(datosBusqueda.tipo == 'cerdo' && datosBusqueda.kilos > 0){
+    if(datosBusqueda.tipo == 'cerdo'){
         let sal = 1.170/70*datosBusqueda.kilos,
             azucar = 0.190/70*datosBusqueda.kilos,
             pluscolor = 0.140/70*datosBusqueda.kilos,
@@ -85,18 +137,18 @@ function mostrarIngredientes(){
             aguaSoja = 5.8/1.940*soja
     
     ingredientes0.innerHTML = `Cerdo: ${datosBusqueda.kilos} Kg<br>
-                               Soja: ${soja.toFixed(3)} Kg<br> `         
-    ingredientes1.innerHTML = `Sal: ${sal.toFixed(3)}<br>
-                              Azucar: ${azucar.toFixed(3)}<br>
-                              Pluscolor: ${pluscolor.toFixed(3)}<br>
-                              Rendiplus: ${rendiplus.toFixed(3)}<br>
-                              Pimienta: ${pimienta.toFixed(3)}<br>
-                              Fecula: ${fecula.toFixed(3)}<br>
-                              Ajo: ${ajo.toFixed(3)}<br>
-                              Rebozador: ${rebozador.toFixed(3)}<br>
-                              Saborizante Jamon: ${saborJamon.toFixed(3)}<br>
-                              Agua: ${agua.toFixed(3)}<br>
-                              Agua para Soja: ${aguaSoja.toFixed(3)}`;
+                               Soja: ${soja.toFixed(2)} Kg<br> `         
+    ingredientes1.innerHTML = `Sal: ${sal.toFixed(2)}<br>
+                              Azucar: ${azucar.toFixed(2)}<br>
+                              Pluscolor: ${pluscolor.toFixed(2)}<br>
+                              Rendiplus: ${rendiplus.toFixed(2)}<br>
+                              Pimienta: ${pimienta.toFixed(2)}<br>
+                              Fecula: ${fecula.toFixed(2)}<br>
+                              Ajo: ${ajo.toFixed(2)}<br>
+                              Rebozador: ${rebozador.toFixed(2)}<br>
+                              Saborizante Jamon: ${saborJamon.toFixed(2)}<br>
+                              Agua: ${agua.toFixed(2)}<br>
+                              Agua para Soja: ${aguaSoja.toFixed(2)}`;
 
     let resultado = parseFloat(datosBusqueda.kilos)
                     + parseFloat(soja)
